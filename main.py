@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from train_xgb_vary_pilot import train #change train_xxx can modify the train function
+from train_xgb_multi_signal_label import train #change train_xxx can modify the train function
 import pickle
 # from test import test
 
