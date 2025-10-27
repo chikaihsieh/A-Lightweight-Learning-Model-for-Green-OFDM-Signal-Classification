@@ -201,7 +201,6 @@ def train(config):
     Clipping_Flag = config.Clipping 
 
 
-
     
     CP_flag = config.with_CP_flag
 
@@ -268,5 +267,6 @@ def train(config):
     # 计算错误的数量
     testing_BER = np.sum(test_errors)/test_pred_binary.shape[0]/test_pred_binary.shape[1]
     print(training_BER)
+
 
     config.BER_realization = testing_BER
