@@ -4,9 +4,7 @@ import math
 import os
 from utils import *
 from einops import rearrange, reduce
-from PixelHop_unit.ofdmhop_noprint import *
-from PixelHop_unit.LAG import *
-from PixelHop_unit.rft import *
+
 import xgboost as xg
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
@@ -16,36 +14,6 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 import random
-def get_pixelhop_feature(batch_x, weight_name, channel_response, patch_num, AC_kernel_list, getK, useDC, add_bias):
-    if patch_num != len(AC_kernel_list):
-        raise Exception(f'mismatch between patch_num {patch_num} and len of AC_kernel_list {len(AC_kernel_list)}')
-    weight_name_list = [f"{weight_name.split('.')[0]}{i}.{weight_name.split('.')[1]}" for i in range(patch_num)]
-    patch_size = batch_x.shape[1] // patch_num
-    ret_feature = None
-    for patch in range(patch_num):
-        batch = batch_x[:,patch*patch_size:(patch+1)*patch_size]
-        feature = PixelHop_Unit(batch, num_AC_kernels=AC_kernel_list[patch], pad='reflect', weight_name=weight_name_list[patch], getK=getK, useDC=useDC, add_bias=add_bias)
-        # if patch == 0:
-        #     ret_feature = np.tile(np.fft.fft(channel_response, n=64).real.T, (batch_x.shape[0], 1))[:,None]
-        # elif patch == 1:
-        #     feature = np.tile(np.fft.fft(channel_response, n=64).imag.T, (batch_x.shape[0], 1))[:,None]
-        #     ret_feature = np.concatenate((ret_feature, feature), axis=2)
-        if patch == 0:
-            ret_feature = feature
-        else:
-            ret_feature = np.concatenate((ret_feature, feature), axis=2)
-    # print(f'---------  final shape after PixelHop: {ret_feature.shape}  ---------' )
-    return ret_feature
-
-def cal_mse_ber(pred, label, task):
-    if task == 'classification':
-        rmse = np.sqrt(np.linalg.norm(label-pred, ord=2))
-        BER = 1 - np.mean(np.equal(pred, label).astype(np.float32))
-    if task == 'regression':
-        rmse = np.sqrt(np.linalg.norm(label-pred, ord=2))
-        BER = 1 - np.mean(np.equal(np.sign(pred-0.5), np.sign(label-0.5).astype(np.float32)).astype(np.float32))
-
-    return rmse, BER
 
     
 def train(config):    
