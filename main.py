@@ -4,7 +4,6 @@ from train_ml_ls import train #change train_xxx can modify the train function
 import pickle
 # from test import test
 
-
 class sysconfig(object):
     weight_name = 'pixelhop.pkl'
     Pilots = 64       # number of pilots
